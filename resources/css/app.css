@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Only apply backdrop blur and color to centered modals, not toasts */
+.swal2-container.swal2-center {
+    backdrop-filter: blur(8px);
+    background-color: rgba(15, 23, 42, 0.6) !important;
+}
