@@ -27,6 +27,25 @@ class ProductionReportController extends Controller
     }
 
     /**
+     * Export reports to Excel (HTML format).
+     */
+    public function export()
+    {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+            abort(403);
+        }
+
+        $reports = ProductionReport::with(['user', 'details'])->latest()->get();
+        
+        $filename = "laporan_produksi_" . date('Y-m-d_H-i') . ".xls";
+        
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        
+        return view('admin.reports.export_daily', compact('reports'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

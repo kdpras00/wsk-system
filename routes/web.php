@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/production/{id}/status', [\App\Http\Controllers\ProductionController::class, 'updateStatus'])->name('production.update-status');
     
     // Daily Production Reports (Digitization)
+    Route::get('daily-reports/export', [\App\Http\Controllers\ProductionReportController::class, 'export'])->name('daily-reports.export');
     Route::resource('daily-reports', \App\Http\Controllers\ProductionReportController::class);
 
     // Admin Routes
