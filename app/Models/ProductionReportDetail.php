@@ -20,7 +20,14 @@ class ProductionReportDetail extends Model
         'meter_count',
         'operator_name',
         'comment',
+        'yarn_material_id',
+        'usage_qty',
     ];
+
+    public function yarn(): BelongsTo
+    {
+        return $this->belongsTo(YarnMaterial::class, 'yarn_material_id');
+    }
 
     public function report(): BelongsTo
     {

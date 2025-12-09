@@ -17,9 +17,10 @@ class DashboardController extends Controller
              // Manager sees Production Overview
              $totalYarn = \App\Models\YarnMaterial::count();
              $activeOrders = \App\Models\ProductionOrder::whereIn('status', ['Planned', 'In Progress'])->count();
+             $pendingOrders = \App\Models\ProductionOrder::where('status', 'Pending Check')->get();
              $recentOrders = \App\Models\ProductionOrder::latest()->take(5)->get();
              
-             return view('manager.dashboard', compact('totalYarn', 'activeOrders', 'recentOrders'));
+             return view('manager.dashboard', compact('totalYarn', 'activeOrders', 'pendingOrders', 'recentOrders'));
         } elseif ($user->role === 'operator') {
              // Operator sees Tasks
              $availableOrders = \App\Models\ProductionOrder::whereIn('status', ['Planned', 'In Progress'])->latest()->get();

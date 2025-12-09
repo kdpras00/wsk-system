@@ -13,9 +13,13 @@ class ProductionReport extends Model
 
     protected $fillable = [
         'user_id',
+        'production_order_id',
         'machine_name',
         'production_date',
         'notes',
+        'status',
+        'approved_by',
+        'rejection_note',
     ];
 
     protected $casts = [
@@ -25,6 +29,16 @@ class ProductionReport extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function productionOrder(): BelongsTo
+    {
+        return $this->belongsTo(ProductionOrder::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function details(): HasMany

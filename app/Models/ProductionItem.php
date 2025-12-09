@@ -21,7 +21,7 @@ class ProductionItem extends Model
         return $this->belongsTo(ProductionOrder::class, 'production_order_id');
     }
 
-    public function yarn()
+    public function yarnMaterial()
     {
         return $this->belongsTo(YarnMaterial::class, 'yarn_material_id');
     }

@@ -63,56 +63,8 @@
             </div>
         </div>
     </div>
-
-    <!-- Recent Orders Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h3 class="font-bold text-slate-800">Recent Production Orders</h3>
-            <button class="text-sm font-medium text-slate-600 hover:text-slate-900">View All</button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-slate-500">
-                <thead class="text-xs text-slate-400 uppercase bg-slate-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 font-semibold">Order ID</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">Product</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">Manager</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">Date</th>
-                        <th scope="col" class="px-6 py-3 font-semibold text-right">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @forelse($recentOrders as $order)
-                    <tr class="bg-white hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-medium text-slate-900">#{{ $order->id }}</td>
-                        <td class="px-6 py-4">{{ $order->category }}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <div class="h-6 w-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                                    {{ substr($order->manager->name ?? '?', 0, 1) }}
-                                </div>
-                                <span>{{ $order->manager->name ?? 'Unknown' }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">{{ $order->created_at->format('M d, Y') }}</td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {{ $order->status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 
-                                   ($order->status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-800') }}">
-                                {{ $order->status }}
-                            </span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-slate-400">
-                            No recent orders found.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+        
+    {{-- Verification Pending section removed as per user request --}}
+</div>
 </div>
 @endsection

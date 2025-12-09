@@ -12,6 +12,8 @@ class ProductionOrder extends Model
     protected $fillable = [
         'order_number',
         'manager_id',
+        'target_quantity',
+        'produced_quantity',
         'status',
         'start_date',
         'end_date',
@@ -25,5 +27,10 @@ class ProductionOrder extends Model
     public function items()
     {
         return $this->hasMany(ProductionItem::class);
+    }
+
+    public function productionReports()
+    {
+        return $this->hasMany(ProductionReport::class);
     }
 }

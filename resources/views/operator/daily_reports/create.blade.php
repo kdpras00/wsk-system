@@ -31,6 +31,22 @@
                 </div>
             @endif
 
+            @if(isset($order))
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-start gap-4">
+                    <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-blue-900">Laporan untuk Order #{{ $order->order_number }}</h4>
+                        <p class="text-sm text-blue-700 mt-1">
+                            Item: {{ $order->items->first()->yarnMaterial->name ?? '-' }} | 
+                            Target: {{ $order->items->first()->planned_quantity ?? 0 }} {{ $order->items->first()->yarnMaterial->unit ?? '' }}
+                        </p>
+                        <input type="hidden" name="production_order_id" value="{{ $order->id }}">
+                    </div>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="machine_name" class="block mb-2 text-sm font-bold text-slate-700">Nomor Mesin / Machine No</label>
@@ -50,6 +66,11 @@
                         <thead class="text-xs text-slate-700 uppercase bg-slate-100">
                             <tr>
                                 <th scope="col" class="px-3 py-3 w-24">Shift</th>
+                                <th scope="col" class="px-3 py-3 w-48">
+                                    Bahan Baku (Yarn)
+                                    <span class="block text-[10px] text-slate-500 font-normal">Pilih untuk kurangi stok</span>
+                                </th>
+                                <th scope="col" class="px-3 py-3 w-24">Pakai (Qty)</th>
                                 <th scope="col" class="px-3 py-3">Counter Awal</th>
                                 <th scope="col" class="px-3 py-3">Counter Akhir</th>
                                 <th scope="col" class="px-3 py-3">PCS</th>
@@ -64,13 +85,26 @@
                                     {{ $shift }}
                                 </td>
                                 <td class="px-2 py-2">
-                                    <input type="number" step="0.1" name="shifts[{{ $index }}][counter_start]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
+                                     <select name="shifts[{{ $index }}][yarn_material_id]" class="w-full px-2 py-1 text-xs border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach($yarns as $yarn)
+                                            <option value="{{ $yarn->id }}">
+                                                {{ $yarn->name }} (Stok: {{ $yarn->stock_quantity }} {{ $yarn->unit }})
+                                            </option>
+                                        @endforeach
+                                     </select>
                                 </td>
                                 <td class="px-2 py-2">
-                                    <input type="number" step="0.1" name="shifts[{{ $index }}][counter_end]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
+                                    <input type="number" step="0.01" min="0" name="shifts[{{ $index }}][usage_qty]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
                                 </td>
                                 <td class="px-2 py-2">
-                                    <input type="number" name="shifts[{{ $index }}][pcs_count]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
+                                    <input type="number" step="0.1" min="0" name="shifts[{{ $index }}][counter_start]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
+                                </td>
+                                <td class="px-2 py-2">
+                                    <input type="number" step="0.1" min="0" name="shifts[{{ $index }}][counter_end]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
+                                </td>
+                                <td class="px-2 py-2">
+                                    <input type="number" min="0" name="shifts[{{ $index }}][pcs_count]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="0">
                                 </td>
                                 <td class="px-2 py-2">
                                     <input type="text" name="shifts[{{ $index }}][comment]" class="w-full px-2 py-1 text-sm border-gray-300 rounded focus:ring-slate-500 focus:border-slate-500" placeholder="Keterangan...">

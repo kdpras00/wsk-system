@@ -30,7 +30,7 @@
                  <!-- Stock -->
                  <div>
                      <label for="stock_quantity" class="block mb-2 text-sm font-bold text-slate-700">Stok Awal</label>
-                    <input type="number" step="0.01" name="stock_quantity" id="stock_quantity" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" placeholder="0.00" required>
+                    <input type="number" step="0.01" min="0" name="stock_quantity" id="stock_quantity" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" placeholder="0.00" required>
                 </div>
 
                  <!-- Unit -->

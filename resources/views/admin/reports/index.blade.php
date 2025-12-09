@@ -70,7 +70,7 @@
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <h3 class="text-lg font-bold text-slate-800">Aktivitas Produksi Terakhir</h3>
-            <button class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Lihat Semua</button>
+            <a href="{{ route('daily-reports.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Lihat Semua</a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">

@@ -19,14 +19,25 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 antialiased text-slate-800">
-    <div class="flex flex-col items-center justify-center min-h-screen px-6 py-8 mx-auto">
-        <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 md:mt-0 sm:max-w-md xl:p-0">
+<body class="antialiased text-slate-800 relative min-h-screen overflow-hidden">
+    <!-- Video Background -->
+    <video autoplay muted loop playsinline class="fixed inset-0 w-full h-full object-cover -z-20">
+        <source src="{{ asset('storage/video.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Dark Overlay -->
+    <div class="fixed inset-0 bg-slate-900/60 -z-10 backdrop-blur-[2px]"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-8 mx-auto">
+        <!-- Main Card -->
+        <div class="w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 md:mt-0 sm:max-w-md xl:p-0">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 @yield('content')
             </div>
         </div>
-        <div class="mt-8 text-slate-400 text-sm">
+        
+        <div class="mt-8 text-white/60 text-sm font-medium tracking-wide">
             &copy; {{ date('Y') }} WSK Production System
         </div>
     </div>

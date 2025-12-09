@@ -31,11 +31,11 @@
             </div>
             <div class="flex">
                 <span class="font-bold w-32">Tanggal:</span>
-                <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->production_date->format('d F Y') }}</span>
+                <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->production_date?->format('d F Y') ?? '-' }}</span>
             </div>
             <div class="flex">
                 <span class="font-bold w-32">Dibuat Oleh:</span>
-                <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->user->name }}</span>
+                <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->user->name ?? 'Unknown User' }}</span>
             </div>
         </div>
 
@@ -79,7 +79,7 @@
             <div>
                 <p class="mb-16">Dibuat Oleh,</p>
                 <div class="border-t border-slate-800 w-32 mx-auto"></div>
-                <p class="font-bold mt-1">{{ $productionReport->user->name }}</p>
+                <p class="font-bold mt-1">{{ $productionReport->user->name ?? 'Unknown User' }}</p>
             </div>
             <div>
                 <p class="mb-16">Diperiksa Oleh,</p>

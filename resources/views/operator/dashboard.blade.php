@@ -36,36 +36,69 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($availableOrders as $order)
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow flex flex-col h-full">
+            <!-- Card Header -->
             <div class="flex justify-between items-start mb-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
-                    Order #{{ $order->id }}
-                </span>
-                <span class="text-xs text-slate-400 font-medium">
-                    {{ $order->created_at->diffForHumans() }}
+                <div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800 mb-1">
+                        Order #{{ $order->order_number }}
+                    </span>
+                    <p class="text-xs text-slate-400 font-medium">{{ $order->created_at->diffForHumans() }}</p>
+                </div>
+                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold
+                    {{ $order->status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 
+                       ($order->status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 
+                       ($order->status === 'Pending Check' ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-800')) }}">
+                    {{ $order->status }}
                 </span>
             </div>
             
-            <h3 class="text-xl font-bold text-slate-800 mb-2">{{ $order->category }}</h3>
-            <p class="text-slate-500 text-sm mb-6 flex-1">
-                Assigned by <span class="font-medium text-slate-700">{{ $order->manager->name ?? 'Manager' }}</span>
-            </p>
+            <!-- Card Body -->
+            <div class="mb-6 flex-1">
+                <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $order->items->first()->yarnMaterial->name ?? 'Unknown Item' }}</h3>
+                <p class="text-slate-500 text-sm">
+                    Target: <span class="font-medium text-slate-700">{{ number_format($order->target_quantity) }} Pcs</span>
+                </p>
+                <p class="text-xs text-slate-400 mt-2">
+                    Assigned by {{ $order->manager->name ?? 'Manager' }}
+                </p>
+            </div>
             
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <div class="text-xs font-medium text-slate-500">
-                    Status: <span class="{{ $order->status === 'In Progress' ? 'text-blue-600' : 'text-slate-700' }}">{{ $order->status }}</span>
+            <!-- Card Footer (Progress & Actions) -->
+            <div class="pt-4 border-t border-slate-100">
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="flex justify-between text-xs text-slate-500 mb-1 font-medium">
+                        <span>Progress</span>
+                        <span>{{ number_format($order->produced_quantity) }} / {{ number_format($order->target_quantity) }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: {{ $order->target_quantity > 0 ? min(($order->produced_quantity / $order->target_quantity) * 100, 100) : 0 }}%"></div>
+                    </div>
                 </div>
+
+                <!-- Actions -->
                 <form action="{{ route('production.update-status', $order->id) }}" method="POST">
                     @csrf
                     @method('PATCH')
                     
                     @if($order->status === 'Planned')
-                        <button name="status" value="In Progress" class="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
+                        <button name="status" value="In Progress" class="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200">
                             Start Job
                         </button>
                     @elseif($order->status === 'In Progress')
-                         <button name="status" value="Completed" class="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-colors">
-                            Complete
-                        </button>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="{{ route('daily-reports.create', ['order_id' => $order->id]) }}" class="flex items-center justify-center px-4 py-2.5 bg-blue-50 text-blue-700 text-sm font-bold rounded-xl hover:bg-blue-100 transition-colors border border-blue-200">
+                                + Report
+                            </a>
+                             <button name="status" value="Pending Check" class="px-4 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 transition-colors shadow-lg shadow-amber-200">
+                                Finish
+                            </button>
+                        </div>
+                    @elseif($order->status === 'Pending Check')
+                        <div class="w-full px-4 py-2.5 bg-orange-50 text-orange-700 text-sm font-bold rounded-xl border border-orange-200 text-center cursor-default flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            Waiting Verification
+                        </div>
                     @endif
                 </form>
             </div>

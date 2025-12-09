@@ -39,9 +39,19 @@
                         {{ $report->details->sum('pcs_count') }}
                     </td>
                     <td class="py-4 px-6 text-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                            Terkirim
-                        </span>
+                        @if($report->status == 'Approved')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                                Approved
+                            </span>
+                        @elseif($report->status == 'Rejected')
+                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 shadow-sm" title="{{ $report->rejection_note }}">
+                                Rejected (Info)
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm">
+                                Pending
+                            </span>
+                        @endif
                     </td>
                 </tr>
                 @empty

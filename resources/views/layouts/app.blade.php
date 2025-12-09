@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -52,13 +55,18 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-800 antialiased relative min-h-screen">
+<body class="bg-gray-50 text-slate-800 antialiased relative min-h-screen" x-data="{ sidebarOpen: window.innerWidth >= 768 }" @resize.window="if (window.innerWidth >= 768) sidebarOpen = true">
     
     <!-- Sidebar -->
-    <aside class="fixed top-0 left-0 z-50 w-72 h-screen transition-transform -translate-x-full md:translate-x-0 sidebar-bg shadow-xl" aria-label="Sidenav" id="drawer-navigation">
+    <aside 
+        class="fixed top-0 left-0 z-50 w-72 h-screen transition-transform duration-300 sidebar-bg shadow-xl -translate-x-full md:translate-x-0" 
+        :class="{ '!translate-x-0': sidebarOpen, '!-translate-x-full': !sidebarOpen }"
+        aria-label="Sidenav" 
+        id="drawer-navigation"
+    >
         <div class="flex flex-col h-full">
             <!-- Logo Section -->
-            <div class="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900/50">
+            <div class="h-20 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-900/50">
                 <a href="{{ url('/dashboard') }}" class="flex items-center gap-3">
                      <div class="bg-white p-1 rounded-md shadow-sm">
                         <img src="{{ asset('storage/logo-wsk.png') }}" class="h-7 w-auto" alt="WSK Logo" /> 
@@ -68,6 +76,10 @@
                         <span class="text-slate-400 text-[10px] font-medium uppercase tracking-widest mt-1">Corporate Portal</span>
                      </div>
                 </a>
+                <!-- Mobile Close Button -->
+                <button @click="sidebarOpen = false" class="md:hidden text-slate-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
             <!-- Navigation Links -->
@@ -160,58 +172,186 @@
     </aside>
 
     <!-- Main Content Wrapper -->
-    <main class="md:ml-72 min-h-screen flex flex-col transition-all duration-300">
+    <main 
+        class="md:ml-72 min-h-screen flex flex-col transition-all duration-300"
+        :class="{ '!ml-0': !sidebarOpen }"
+    >
         <!-- Top Navbar (Glass) -->
-        <nav class="glass-nav sticky top-0 z-40 px-6 py-3 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
-            <div class="flex items-center gap-4">
-                 <button data-drawer-target="drawer-navigation" data-drawer-toggle="drawer-navigation" aria-controls="drawer-navigation" class="p-2 text-slate-500 rounded-lg cursor-pointer md:hidden hover:text-slate-900 hover:bg-slate-100 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                 </button>
-                 
-                 <h1 class="text-xl font-bold text-slate-800 tracking-tight hidden sm:block">
-                     @yield('header', 'Dashboard')
-                 </h1>
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <!-- Date Display -->
-                <div class="hidden md:flex flex-col items-end mr-2">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Today</span>
-                    <span class="text-sm font-bold text-slate-700">{{ now()->format('d M Y') }}</span>
+        <!-- Top Navbar -->
+        <nav class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm transition-all duration-300">
+            <div class="px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                     <!-- Toggle Button -->
+                     <button @click="sidebarOpen = !sidebarOpen" class="p-2 -ml-2 text-slate-500 rounded-lg hover:text-slate-900 hover:bg-slate-100 focus:ring-4 focus:ring-slate-100 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                     </button>
+                     
+                     <div class="hidden sm:flex flex-col">
+                        <h1 class="text-xl font-bold text-slate-800 tracking-tight leading-none">
+                            @yield('header', 'Dashboard')
+                        </h1>
+                     </div>
                 </div>
-
-                <!-- Notifications (Mock) -->
-                <button class="relative p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span class="absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
                 
-                <!-- User Profile Dropdown -->
-                <div class="relative ml-2" x-data="{ open: false }">
-                    <button @click="open = !open" @click.away="open = false" class="flex items-center gap-3 hover:bg-slate-50 rounded-full p-1 pr-3 transition-colors border border-transparent hover:border-slate-100">
-                        <div class="h-9 w-9 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold text-sm shadow ring-2 ring-white">
-                            {{ substr(Auth::user()->name ?? 'U', 0, 1) }}
-                        </div>
-                        <div class="hidden md:flex flex-col items-start">
-                            <span class="text-sm font-bold text-slate-700 leading-none">{{ Auth::user()->name ?? 'Guest' }}</span>
-                            <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">{{ Auth::user()->role ?? 'User' }}</span>
-                        </div>
-                        <svg class="w-4 h-4 text-slate-300 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
+                <div class="flex items-center gap-4 md:gap-6">
+                    <!-- Date Display -->
+                    <div class="hidden lg:flex flex-col items-end border-r border-slate-200 pr-6 mr-2">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Today</span>
+                        <span class="text-sm font-bold text-slate-700">{{ now()->format('d M Y') }}</span>
+                    </div>
 
-                    <!-- Dropdown Menu -->
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 border border-slate-100 z-50 origin-top-right" style="display: none;">
-                        <div class="px-4 py-3 border-b border-slate-50 md:hidden">
-                            <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name ?? 'Guest' }}</p>
-                            <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email ?? '' }}</p>
+                    <!-- Notifications -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="relative p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-50 focus:ring-4 focus:ring-slate-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            <!-- Notification Badge -->
+                            <span id="notification-badge" class="{{ Auth::user()->unreadNotifications->count() > 0 ? '' : 'hidden' }} absolute top-2 right-2 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                        </button>
+                        
+                        <script>
+                            setInterval(function() {
+                                fetch('{{ route("notifications.count") }}')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const badge = document.getElementById('notification-badge');
+                                        if (data.count > 0) {
+                                            badge.classList.remove('hidden');
+                                        } else {
+                                            badge.classList.add('hidden');
+                                        }
+                                    });
+                            }, 30000); // Poll every 30s
+                        </script>
+
+                        <!-- Notification Dropdown -->
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-100 z-50 origin-top-right overflow-hidden" style="display: none;">
+                            <div class="px-4 py-3 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
+                                <h3 class="text-sm font-bold text-slate-800">Notifikasi</h3>
+                                <span id="dropdown-count" class="{{ Auth::user()->unreadNotifications->count() > 0 ? '' : 'hidden' }} text-xs font-semibold text-white bg-red-500 px-2 py-0.5 rounded-full">{{ Auth::user()->unreadNotifications->count() }} Baru</span>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto" id="notification-list">
+                                @forelse(Auth::user()->unreadNotifications as $notification)
+                                    <a href="{{ route('notifications.read', $notification->id) }}" class="block px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 relative">
+                                        <div class="flex items-start">
+                                            <div class="ml-3 w-0 flex-1">
+                                                <p class="text-sm font-medium text-slate-900">{{ $notification->data['title'] ?? 'Info' }}</p>
+                                                <p class="text-xs text-slate-500 mt-0.5">{{ $notification->data['message'] ?? '' }}</p>
+                                                <p class="text-[10px] text-slate-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="px-4 py-8 text-center text-slate-500 text-sm">Tidak ada notifikasi baru.</div>
+                                @endforelse
+                            </div>
                         </div>
-                        {{-- Profile Settings Removed --}}
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                                Sign out
+                    </div>
+                    
+                    <!-- Notification Toast -->
+                    <div id="notification-toast" class="fixed bottom-4 right-4 bg-white border-l-4 border-blue-500 shadow-xl rounded-r-lg p-4 w-80 hidden z-[100] transform transition-all duration-300 translate-y-10 opacity-0">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 text-blue-500">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="ml-3 w-0 flex-1">
+                                <p class="text-sm font-medium text-gray-900" id="toast-title">Notification</p>
+                                <p class="text-xs text-gray-500 mt-1" id="toast-message">New message received.</p>
+                            </div>
+                            <button onclick="document.getElementById('notification-toast').classList.add('hidden')" class="ml-4 text-gray-400 hover:text-gray-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
-                        </form>
+                        </div>
+                    </div>
+
+                    <script>
+                        // Global Helper for SweetAlert Confirmations
+                        function confirmFormSubmission(event, formId, title = 'Are you sure?', text = "You won't be able to revert this!", confirmBtnText = 'Yes, do it!', icon = 'warning') {
+                            event.preventDefault();
+                            Swal.fire({
+                                title: title,
+                                text: text,
+                                icon: icon,
+                                showCancelButton: true,
+                                confirmButtonColor: '#10b981', // Emerald 500
+                                cancelButtonColor: '#64748b', // Slate 500
+                                confirmButtonText: confirmBtnText,
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    document.getElementById(formId).submit();
+                                }
+                            })
+                        }
+
+                        let lastNotifId = '{{ Auth::user()->unreadNotifications->first()->id ?? 0 }}';
+                        
+                        setInterval(function() {
+                            fetch('{{ route("notifications.count") }}')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const badge = document.getElementById('notification-badge');
+                                    const countSpan = document.getElementById('dropdown-count');
+                                    
+                                    if (data.count > 0) {
+                                        badge.classList.remove('hidden');
+                                        if(countSpan) {
+                                            countSpan.innerText = data.count + ' Baru';
+                                            countSpan.classList.remove('hidden');
+                                        }
+                                        
+                                        // Check for new notification
+                                        if (data.latest && data.latest.id !== lastNotifId) {
+                                            lastNotifId = data.latest.id;
+                                            showToast(data.latest.data.title, data.latest.data.message);
+                                        }
+                                    } else {
+                                        badge.classList.add('hidden');
+                                        if(countSpan) countSpan.classList.add('hidden');
+                                    }
+                                });
+                        }, 10000); // Check every 10s
+
+                        function showToast(title, message) {
+                            const toast = document.getElementById('notification-toast');
+                            document.getElementById('toast-title').innerText = title;
+                            document.getElementById('toast-message').innerText = message;
+                            
+                            toast.classList.remove('hidden', 'translate-y-10', 'opacity-0');
+                            
+                            // Play sound? Optional.
+                            
+                            setTimeout(() => {
+                                toast.classList.add('translate-y-10', 'opacity-0');
+                                setTimeout(() => toast.classList.add('hidden'), 300);
+                            }, 5000);
+                        }
+                    </script>
+                    
+                    <!-- User Profile -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.away="open = false" class="flex items-center gap-3 hover:bg-slate-50 rounded-full py-1 pl-1 pr-3 transition-all border border-transparent hover:border-slate-100 focus:ring-4 focus:ring-slate-100">
+                            <img class="h-9 w-9 rounded-full object-cover shadow-sm ring-2 ring-white" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0f172a&color=fff" alt="{{ Auth::user()->name }}">
+                            <div class="hidden md:flex flex-col items-start">
+                                <span class="text-sm font-bold text-slate-700 leading-none">{{ Auth::user()->name }}</span>
+                                <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">{{ Auth::user()->role }}</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 hidden md:block transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-1 border border-slate-100 z-50 origin-top-right" style="display: none;">
+                            <div class="px-4 py-3 border-b border-slate-50 md:hidden bg-slate-50/50">
+                                <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                    Sign out
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

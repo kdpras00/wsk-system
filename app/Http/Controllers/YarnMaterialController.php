@@ -18,8 +18,14 @@ class YarnMaterialController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
+        if (auth()->user()->role === 'operator') {
+            abort(403);
+        }
         return view('yarns.create');
     }
 
@@ -28,6 +34,10 @@ class YarnMaterialController extends Controller
      */
     public function store(\Illuminate\Http\Request $request)
     {
+        if (auth()->user()->role === 'operator') {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
@@ -55,6 +65,9 @@ class YarnMaterialController extends Controller
      */
     public function edit(string $id)
     {
+        if (auth()->user()->role === 'operator') {
+            abort(403);
+        }
         $yarn = \App\Models\YarnMaterial::findOrFail($id);
         return view('yarns.edit', compact('yarn'));
     }
@@ -64,6 +77,10 @@ class YarnMaterialController extends Controller
      */
     public function update(\Illuminate\Http\Request $request, string $id)
     {
+        if (auth()->user()->role === 'operator') {
+            abort(403);
+        }
+
          $validated = $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
@@ -84,6 +101,10 @@ class YarnMaterialController extends Controller
      */
     public function destroy(string $id)
     {
+        if (auth()->user()->role === 'operator') {
+            abort(403);
+        }
+
         $yarn = \App\Models\YarnMaterial::findOrFail($id);
         $yarn->delete();
 
