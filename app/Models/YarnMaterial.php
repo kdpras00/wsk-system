@@ -11,6 +11,7 @@ class YarnMaterial extends Model
 
     protected $fillable = [
         'name',
+        'pattern',
         'color',
         'type',
         'batch_number',

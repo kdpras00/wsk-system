@@ -21,6 +21,12 @@ class AuthController extends Controller
         if (\Illuminate\Support\Facades\Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            $intendedUrl = session('url.intended', '');
+            if (str_contains($intendedUrl, 'notifications/count')) {
+                session()->forget('url.intended');
+                return redirect()->route('dashboard');
+            }
+
             return redirect()->intended('dashboard');
         }
 
@@ -40,19 +46,17 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:admin,manager,operator'],
         ]);
 
         $user = \App\Models\User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($validatedData['password']),
-            'role' => $validatedData['role'],
+            'role' => 'operator', // Default role for registration
         ]);
 
-        \Illuminate\Support\Facades\Auth::login($user);
-
-        return redirect()->route('dashboard');
+        // Redirect to login instead of auto-login
+        return redirect()->route('login')->with('success', 'Registration successful! Please login to continue.');
     }
 
     public function logout(Request $request)

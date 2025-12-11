@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('header', 'Edit Bahan Benang')
+@section('header', 'Edit Jenis Kain')
 
 @section('content')
 <div class="max-w-2xl mx-auto">
@@ -12,20 +12,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Name -->
                 <div class="col-span-2">
-                    <label for="name" class="block mb-2 text-sm font-bold text-slate-700">Nama Benang / Item Name</label>
+                    <label for="name" class="block mb-2 text-sm font-bold text-slate-700">Nama Kain / Item Name</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $yarn->name) }}" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" required>
                 </div>
+
+
 
                 <!-- Type -->
                 <div>
                      <label for="type" class="block mb-2 text-sm font-bold text-slate-700">Jenis / Type</label>
                     <input type="text" name="type" id="type" value="{{ old('type', $yarn->type) }}" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" required>
-                </div>
-
-                 <!-- Color -->
-                 <div>
-                     <label for="color" class="block mb-2 text-sm font-bold text-slate-700">Warna / Color</label>
-                    <input type="text" name="color" id="color" value="{{ old('color', $yarn->color) }}" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" required>
                 </div>
 
                  <!-- Stock -->

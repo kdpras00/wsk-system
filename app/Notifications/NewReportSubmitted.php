@@ -45,6 +45,7 @@ class NewReportSubmitted extends Notification
             'title' => 'Laporan Baru Masuk',
             'message' => 'Laporan dari ' . $this->report->user->name . ' menunggu verifikasi.',
             'url' => route('daily-reports.show', $this->report->id),
+            'report_id' => $this->report->id,
             'type' => 'info'
         ];
     }

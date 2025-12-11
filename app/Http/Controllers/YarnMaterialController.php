@@ -11,8 +11,9 @@ class YarnMaterialController extends Controller
      */
     public function index()
     {
-        $yarns = \App\Models\YarnMaterial::latest()->paginate(10);
-        return view('yarns.index', compact('yarns'));
+        $yarns = \App\Models\YarnMaterial::latest()->get(); // Get all for manual table logic or limited pagination
+        $fabrics = \App\Models\Fabric::latest()->get();
+        return view('yarns.index', compact('yarns', 'fabrics'));
     }
 
     /**
@@ -40,12 +41,17 @@ class YarnMaterialController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'pattern' => 'nullable|string|max:255',
             'type' => 'required|string|max:255',
-            'color' => 'required|string|max:50',
+            'color' => 'nullable|string|max:50',
             'stock_quantity' => 'required|numeric|min:0',
             'unit' => 'required|string|in:kg,rolls,pcs', // Example units
             'batch_number' => 'nullable|string|max:100',
         ]);
+
+        if (empty($validated['color'])) {
+            $validated['color'] = '-';
+        }
 
         \App\Models\YarnMaterial::create($validated);
 
@@ -83,12 +89,17 @@ class YarnMaterialController extends Controller
 
          $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'pattern' => 'nullable|string|max:255',
             'type' => 'required|string|max:255',
-            'color' => 'required|string|max:50',
+            'color' => 'nullable|string|max:50',
             'stock_quantity' => 'required|numeric|min:0',
             'unit' => 'required|string|in:kg,rolls,pcs',
             'batch_number' => 'nullable|string|max:100',
         ]);
+
+        if (empty($validated['color'])) {
+            $validated['color'] = '-';
+        }
 
         $yarn = \App\Models\YarnMaterial::findOrFail($id);
         $yarn->update($validated);

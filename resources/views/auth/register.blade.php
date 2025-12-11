@@ -3,9 +3,9 @@
 @section('content')
     <div class="flex flex-col items-center mb-6">
         <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900 md:text-2xl">
-            Create Account
+            Operator Registration
         </h1>
-        <p class="text-sm text-slate-500">Join the corporate production system</p>
+        <p class="text-sm text-slate-500">Register as a production operator</p>
     </div>
 
     <form class="space-y-4 md:space-y-6" action="{{ route('register') }}" method="POST">
@@ -24,14 +24,7 @@
                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
-        <div>
-            <label for="role" class="block mb-2 text-sm font-medium text-slate-900">Select Role</label>
-            <select name="role" id="role" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5">
-                <option value="operator">Operator</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
+
         <div>
             <label for="password" class="block mb-2 text-sm font-medium text-slate-900">Password</label>
             <input type="password" name="password" id="password" placeholder="••••••••" class="bg-slate-50 border border-slate-300 text-slate-900 sm:text-sm rounded-lg focus:ring-slate-500 focus:border-slate-500 block w-full p-2.5" required="">

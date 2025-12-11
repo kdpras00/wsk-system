@@ -35,7 +35,10 @@ class ProductionReportController extends Controller
     /**
      * Export reports to Excel (HTML format).
      */
-    public function export()
+    /**
+     * Export reports DETAILED (Operator View) to Excel.
+     */
+    public function exportDetails()
     {
         if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
             abort(403);
@@ -43,7 +46,7 @@ class ProductionReportController extends Controller
 
         $reports = ProductionReport::with(['user', 'details'])->latest()->get();
         
-        $filename = "laporan_produksi_" . date('Y-m-d_H-i') . ".xls";
+        $filename = "laporan_detail_operator_" . date('Y-m-d_H-i') . ".xls";
         
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -52,17 +55,41 @@ class ProductionReportController extends Controller
     }
 
     /**
+     * Export reports SUMMARY (Admin View) to Excel.
+     */
+    public function exportSummary()
+    {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+            abort(403);
+        }
+
+        $reports = ProductionReport::with(['user', 'details', 'approvedBy'])->latest()->get();
+        
+        $filename = "rekap_admin_" . date('Y-m-d_H-i') . ".xls";
+        
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        
+        return view('admin.reports.export_summary', compact('reports'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
-        $yarns = YarnMaterial::where('stock_quantity', '>', 0)->get();
-        $order = null;
-        if ($request->has('order_id')) {
-            $order = \App\Models\ProductionOrder::find($request->order_id);
-        }
+        $yarns = YarnMaterial::all();
+        // Fetch distinct patterns and their linked yarn for auto-selection logic
+        // We group by pattern to assume 1 pattern = 1 yarn recipe. If multiple, we take the latest.
+        $fabricMapping = \App\Models\Fabric::select('pattern', 'yarn_material_id')
+                            ->orderBy('created_at', 'desc')
+                            ->get()
+                            ->unique('pattern')
+                            ->keyBy('pattern');
         
-        return view('operator.daily_reports.create', compact('yarns', 'order'));
+        $patterns = $fabricMapping->keys();
+        
+        return view('operator.daily_reports.create', compact('yarns', 'patterns', 'fabricMapping'));
     }
 
     public function store(Request $request)
@@ -71,41 +98,47 @@ class ProductionReportController extends Controller
             'production_order_id' => 'nullable|exists:production_orders,id',
             'machine_name' => 'required|string|max:50',
             'production_date' => 'required|date',
+            'shift_name' => 'required|string', // Global Shift for this report
             'notes' => 'nullable|string',
-            'shifts' => 'array',
-            'shifts.*.shift_name' => 'required|string',
-            'shifts.*.counter_start' => 'nullable|numeric',
-            'shifts.*.counter_end' => 'nullable|numeric',
-            'shifts.*.pcs_count' => 'nullable|numeric',
-            'shifts.*.comment' => 'nullable|string',
-            'shifts.*.yarn_material_id' => 'nullable|exists:yarn_materials,id',
-            'shifts.*.usage_qty' => 'nullable|numeric|min:0',
+            'details' => 'required|array|min:1',
+            'details.*.yarn_material_id' => 'nullable|exists:yarn_materials,id', // Per-row Yarn
+            'details.*.pattern' => 'nullable|string|max:255', // Per-row Pattern (Text)
+            'details.*.jam' => 'nullable|date_format:H:i',
+            'details.*.meter_count' => 'nullable|numeric|min:0',
+            'details.*.no_pcs' => 'nullable|string|max:50',
+            'details.*.grade' => 'nullable|string|max:10',
+            'details.*.usage_qty' => 'nullable|numeric|min:0',
+            'details.*.posisi_benang_putus' => 'nullable|string|max:255',
+            'details.*.kode_masalah' => 'nullable|string|max:50',
+            'details.*.comment' => 'nullable|string',
         ]);
 
         $report = null;
 
         DB::transaction(function () use ($validated, &$report) {
-            // STOCK CHECK FIRST
-            foreach ($validated['shifts'] as $index => $shift) {
-                 // ... same logic
-                 if (!empty($shift['yarn_material_id']) && !empty($shift['usage_qty']) && $shift['usage_qty'] > 0) {
-                     $yarn = YarnMaterial::lockForUpdate()->find($shift['yarn_material_id']);
-                     // ...
-                     if (!$yarn) {
-                          throw \Illuminate\Validation\ValidationException::withMessages([
-                             "shifts.$index.yarn_material_id" => ['Bahan benang tidak ditemukan.']
-                         ]);
-                     }
-
-                     if ($yarn->stock_quantity < $shift['usage_qty']) {
-                         throw \Illuminate\Validation\ValidationException::withMessages([
-                             "shifts.$index.usage_qty" => ["Stok tidak cukup untuk {$yarn->name}. Tersedia: {$yarn->stock_quantity} {$yarn->unit}, Diminta: {$shift['usage_qty']}."]
-                         ]);
-                     }
-                 }
+            // 1. CALCULATE TOTAL USAGE PER YARN
+            $usagePerYarn = [];
+            foreach ($validated['details'] as $detail) {
+                if (!empty($detail['yarn_material_id']) && !empty($detail['usage_qty'])) {
+                    $yarnId = $detail['yarn_material_id'];
+                    if (!isset($usagePerYarn[$yarnId])) {
+                        $usagePerYarn[$yarnId] = 0;
+                    }
+                    $usagePerYarn[$yarnId] += $detail['usage_qty'];
+                }
             }
 
-            // IF ALL CHECKS PASS, CREATE REPORT
+            // 2. CHECK STOCK & LOCK RECORDS
+            foreach ($usagePerYarn as $yarnId => $totalRequested) {
+                $yarn = YarnMaterial::lockForUpdate()->find($yarnId);
+                if ($yarn->stock_quantity < $totalRequested) {
+                     throw \Illuminate\Validation\ValidationException::withMessages([
+                         "details" => ["Stok tidak cukup untuk {$yarn->name}. Tersedia: {$yarn->stock_quantity} {$yarn->unit}, Total Diminta: {$totalRequested}."]
+                     ]);
+                }
+            }
+
+            // 3. CREATE REPORT HEADER
             $report = ProductionReport::create([
                 'user_id' => Auth::id(),
                 'production_order_id' => $validated['production_order_id'] ?? null,
@@ -114,27 +147,32 @@ class ProductionReportController extends Controller
                 'notes' => $validated['notes'],
             ]);
 
-            foreach ($validated['shifts'] as $shift) {
-                // Skip if no numeric data is provided AND no yarn usage
-                if (is_null($shift['counter_start']) && is_null($shift['counter_end']) && is_null($shift['pcs_count']) && empty($shift['usage_qty'])) {
+            // 4. UPDATE STOCK (DECREMENT)
+            foreach ($usagePerYarn as $yarnId => $totalRequested) {
+                 $yarn = YarnMaterial::find($yarnId);
+                 $yarn->decrement('stock_quantity', $totalRequested);
+            }
+
+            // 5. CREATE REPORT DETAILS
+            foreach ($validated['details'] as $detail) {
+                // Skip completely empty rows if any
+                if (empty($detail['jam']) && empty($detail['meter_count']) && empty($detail['usage_qty'])) {
                     continue;
                 }
 
-                // Decrement Stock
-                if (!empty($shift['yarn_material_id']) && !empty($shift['usage_qty']) && $shift['usage_qty'] > 0) {
-                     $yarn = YarnMaterial::find($shift['yarn_material_id']);
-                     $yarn->decrement('stock_quantity', $shift['usage_qty']);
-                }
-
                 $report->details()->create([
-                    'shift_name' => $shift['shift_name'],
-                    'counter_start' => $shift['counter_start'] ?? 0,
-                    'counter_end' => $shift['counter_end'] ?? 0,
-                    'pcs_count' => $shift['pcs_count'] ?? 0,
-                    'comment' => $shift['comment'] ?? null,
+                    'shift_name' => $validated['shift_name'], // Uses global shift
+                    'jam' => $detail['jam'] ?? null,
+                    'meter_count' => $detail['meter_count'] ?? 0,
+                    'no_pcs' => $detail['no_pcs'] ?? null,
+                    'grade' => $detail['grade'] ?? null,
+                    'pattern' => $detail['pattern'] ?? null, // Save Pattern Name
+                    'usage_qty' => $detail['usage_qty'] ?? 0,
+                    'posisi_benang_putus' => $detail['posisi_benang_putus'] ?? null,
+                    'kode_masalah' => $detail['kode_masalah'] ?? null,
+                    'comment' => $detail['comment'] ?? null,
                     'operator_name' => Auth::user()->name, 
-                    'yarn_material_id' => $shift['yarn_material_id'] ?? null,
-                    'usage_qty' => $shift['usage_qty'] ?? 0,
+                    'yarn_material_id' => $detail['yarn_material_id'] ?? null,
                 ]);
             }
         });
@@ -143,7 +181,7 @@ class ProductionReportController extends Controller
         $managers = User::where('role', 'manager')->orWhere('role', 'admin')->get();
         Notification::send($managers, new NewReportSubmitted($report));
 
-        return redirect()->route('daily-reports.create')->with('success', 'Laporan Harian berhasil disimpan. Stok bahan otomatis berkurang.');
+        return redirect()->route('daily-reports.create')->with('success', 'Laporan Log Sheet berhasil disimpan.');
     }
 
     /**
@@ -199,6 +237,14 @@ class ProductionReportController extends Controller
             $productionReport->user->notify(new ReportStatusChanged($productionReport, 'Approved'));
         }
 
+        // SMART NOTIFICATION: Mark "New Report" notification as read for this admin
+        Auth::user()->unreadNotifications
+            ->where('type', \App\Notifications\NewReportSubmitted::class)
+            ->filter(function ($notification) use ($productionReport) {
+                return isset($notification->data['report_id']) && $notification->data['report_id'] == $productionReport->id;
+            })
+            ->markAsRead();
+
         return back()->with('success', 'Laporan berhasil disetujui.');
     }
 
@@ -232,6 +278,14 @@ class ProductionReportController extends Controller
         if ($productionReport->user) {
             $productionReport->user->notify(new ReportStatusChanged($productionReport, 'Rejected'));
         }
+
+        // SMART NOTIFICATION: Mark "New Report" notification as read for this admin
+        Auth::user()->unreadNotifications
+            ->where('type', \App\Notifications\NewReportSubmitted::class)
+            ->filter(function ($notification) use ($productionReport) {
+                return isset($notification->data['report_id']) && $notification->data['report_id'] == $productionReport->id;
+            })
+            ->markAsRead();
 
         return back()->with('success', 'Laporan ditolak. Stok bahan telah dikembalikan.');
     }

@@ -34,6 +34,21 @@
                 <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->production_date?->format('d F Y') ?? '-' }}</span>
             </div>
             <div class="flex">
+                <span class="font-bold w-32">Shift:</span>
+                <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->details->first()->shift_name ?? '-' }}</span>
+            </div>
+             <div class="flex">
+                <span class="font-bold w-32">Kain / Pattern:</span>
+                <span class="border-b border-dotted border-slate-400 flex-1">
+                    @php 
+                        $firstDetail = $productionReport->details->first();
+                        $yarnName = $firstDetail?->yarnMaterial->name ?? '-';
+                        $pattern = $firstDetail?->yarnMaterial->pattern ?? '';
+                    @endphp
+                    {{ $yarnName }} {{ $pattern ? "($pattern)" : "" }}
+                </span>
+            </div>
+            <div class="flex">
                 <span class="font-bold w-32">Dibuat Oleh:</span>
                 <span class="border-b border-dotted border-slate-400 flex-1">{{ $productionReport->user->name ?? 'Unknown User' }}</span>
             </div>
@@ -43,28 +58,38 @@
         <table class="w-full border-collapse border border-slate-800 text-sm mb-6">
             <thead>
                 <tr class="bg-slate-100 text-slate-900">
-                    <th class="border border-slate-800 px-3 py-2 text-center w-20">Shift</th>
-                    <th class="border border-slate-800 px-3 py-2 text-center">Counter Awal</th>
-                    <th class="border border-slate-800 px-3 py-2 text-center">Counter Akhir</th>
-                    <th class="border border-slate-800 px-3 py-2 text-center">Output (PCS)</th>
-                    <th class="border border-slate-800 px-3 py-2 text-center">Keterangan / Masalah</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-32">Jenis Benang</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-32">Pattern</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-16">Jam</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-16">Meter</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center">No PCS</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-12">Grade</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center w-16">Qty (Kg)</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center">Posisi Putus</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center">Masalah</th>
+                    <th class="border border-slate-800 px-2 py-2 text-center">Keterangan</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($productionReport->details as $detail)
                 <tr>
-                    <td class="border border-slate-800 px-3 py-2 font-bold text-center bg-slate-50">{{ $detail->shift_name }}</td>
-                    <td class="border border-slate-800 px-3 py-2 text-right">{{ $detail->counter_start }}</td>
-                    <td class="border border-slate-800 px-3 py-2 text-right">{{ $detail->counter_end }}</td>
-                    <td class="border border-slate-800 px-3 py-2 text-right font-bold">{{ $detail->pcs_count }}</td>
-                    <td class="border border-slate-800 px-3 py-2 text-left">{{ $detail->comment ?? '-' }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center text-xs">{{ $detail->yarnMaterial->name ?? '-' }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center text-xs">{{ $detail->pattern ?? '-' }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center">{{ $detail->jam ? \Carbon\Carbon::parse($detail->jam)->format('H:i') : '-' }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center">{{ $detail->meter_count }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center font-bold">{{ $detail->no_pcs }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center">{{ $detail->grade }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-center">{{ $detail->usage_qty > 0 ? $detail->usage_qty : '-' }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-left text-xs">{{ $detail->posisi_benang_putus }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-left text-xs">{{ $detail->kode_masalah }}</td>
+                    <td class="border border-slate-800 px-2 py-1 text-left text-xs">{{ $detail->comment }}</td>
                 </tr>
                 @endforeach
                 <!-- Footer Row -->
                 <tr class="bg-slate-100 font-bold">
-                    <td colspan="3" class="border border-slate-800 px-3 py-2 text-right">TOTAL</td>
-                    <td class="border border-slate-800 px-3 py-2 text-right">{{ $productionReport->details->sum('pcs_count') }}</td>
-                    <td class="border border-slate-800 px-3 py-2 bg-slate-200"></td>
+                    <td colspan="6" class="border border-slate-800 px-3 py-2 text-right">TOTAL KG</td>
+                    <td class="border border-slate-800 px-3 py-2 text-center">{{ $productionReport->details->sum('usage_qty') }}</td>
+                    <td colspan="3" class="border border-slate-800 px-3 py-2 bg-slate-200"></td>
                 </tr>
             </tbody>
         </table>

@@ -22,6 +22,12 @@ class ProductionReportDetail extends Model
         'comment',
         'yarn_material_id',
         'usage_qty',
+        'pattern',
+        'jam',
+        'posisi_benang_putus',
+        'kode_masalah',
+        'no_pcs',
+        'grade',
     ];
 
     public function yarn(): BelongsTo

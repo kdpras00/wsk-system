@@ -22,11 +22,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications/count', [\App\Http\Controllers\NotificationController::class, 'count'])->name('notifications.count');
     
     Route::resource('yarns', \App\Http\Controllers\YarnMaterialController::class);
+    Route::resource('fabrics', \App\Http\Controllers\FabricController::class);
     Route::resource('production', \App\Http\Controllers\ProductionController::class);
     Route::patch('/production/{id}/status', [\App\Http\Controllers\ProductionController::class, 'updateStatus'])->name('production.update-status');
     
     // Daily Production Reports (Digitization)
-    Route::get('daily-reports/export', [\App\Http\Controllers\ProductionReportController::class, 'export'])->name('daily-reports.export');
+    Route::get('daily-reports/export-details', [\App\Http\Controllers\ProductionReportController::class, 'exportDetails'])->name('daily-reports.export_details');
+    Route::get('daily-reports/export-summary', [\App\Http\Controllers\ProductionReportController::class, 'exportSummary'])->name('daily-reports.export_summary');
     Route::patch('daily-reports/{productionReport}/approve', [\App\Http\Controllers\ProductionReportController::class, 'approve'])->name('daily-reports.approve');
     Route::patch('daily-reports/{productionReport}/reject', [\App\Http\Controllers\ProductionReportController::class, 'reject'])->name('daily-reports.reject');
     Route::resource('daily-reports', \App\Http\Controllers\ProductionReportController::class);
