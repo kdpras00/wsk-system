@@ -56,6 +56,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="px-6 py-4 border-t border-slate-100">
+            {{ $yarns->appends(['fabrics_page' => $fabrics->currentPage()])->links('vendor.pagination.custom') }}
+        </div>
     </div>
 
     <!-- Section 2: Master Data Barang Jadi (Kain) -->
@@ -123,6 +126,9 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-100">
+            {{ $fabrics->appends(['yarns_page' => $yarns->currentPage()])->links('vendor.pagination.custom') }}
         </div>
     </div>
 </div>

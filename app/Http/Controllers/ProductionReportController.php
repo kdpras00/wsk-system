@@ -28,7 +28,7 @@ class ProductionReportController extends Controller
         }
 
         // Operator View: My History
-        $reports = ProductionReport::where('user_id', Auth::id())->with('details')->latest()->get();
+        $reports = ProductionReport::where('user_id', Auth::id())->with('details')->latest()->paginate(10);
         return view('operator.daily_reports.index', compact('reports'));
     }
 

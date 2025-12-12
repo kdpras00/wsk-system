@@ -76,15 +76,10 @@
                                     </select>
                                 </td>
                                 <td class="p-2">
-                                    <select name="details[0][pattern]" onchange="autoSelectYarn(this)" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" required>
-                                        <option value="">-- Pilih Pattern --</option>
-                                        @foreach($patterns as $pattern)
-                                            <option value="{{ $pattern }}">{{ $pattern }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" list="pattern_list" name="details[0][pattern]" onchange="autoSelectYarn(this)" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="Ketik Pattern..." required>
                                 </td>
                                 <td class="p-2"><input type="time" name="details[0][jam]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 bg-white h-10"></td>
-                                <td class="p-2"><input type="number" step="0.1" name="details[0][meter_count]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="0"></td>
+                                <td class="p-2"><input type="number" step="0.01" name="details[0][meter_count]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="0"></td>
                                 <td class="p-2"><input type="text" name="details[0][no_pcs]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="-"></td>
                                 <td class="p-2">
                                     <select name="details[0][grade]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10">
@@ -109,6 +104,13 @@
                 </div>
             </div>
 
+            <!-- Datalist for Pattern Suggestions (Shared) -->
+            <datalist id="pattern_list">
+                @foreach($patterns as $pattern)
+                    <option value="{{ $pattern }}">
+                @endforeach
+            </datalist>
+
             <div class="flex justify-end pt-4 border-t border-slate-100">
                 <button type="submit" class="text-white bg-slate-900 hover:bg-slate-800 focus:ring-4 focus:outline-none focus:ring-slate-300 font-bold rounded-lg text-sm px-6 py-3 text-center shadow-lg transition-all w-full md:w-auto">
                     Simpan Laporan Harian
@@ -132,13 +134,7 @@
         @endforeach
     `;
 
-    // Pre-load distinct pattern options from Blade
-    const patternOptions = `
-        <option value="">-- Pilih Pattern --</option>
-        @foreach($patterns as $pattern)
-            <option value="{{ $pattern }}">{{ $pattern }}</option>
-        @endforeach
-    `;
+    // Note: Pattern datalist is now in HTML, no need for patternOptions JS string
 
     function addRow() {
         const tbody = document.getElementById('logTableBody');
@@ -151,22 +147,28 @@
                 </select>
             </td>
             <td class="p-2">
-                <select name="details[\${rowCount}][pattern]" onchange="autoSelectYarn(this)" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" required>
-                    \${patternOptions}
-                </select>
+                 <input type="text" list="pattern_list" name="details[\${rowCount}][pattern]" onchange="autoSelectYarn(this)" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="Ketik Pattern..." required>
             </td>
-            <td class="p-2"><input type="time" name="details[\${rowCount}][jam]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 bg-white h-10"></td>
-            <td class="p-2"><input type="number" step="0.1" name="details[\${rowCount}][meter_count]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="0"></td>
-            <td class="p-2"><input type="text" name="details[\${rowCount}][no_pcs]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="-"></td>
             <td class="p-2">
-                <select name="details[\${rowCount}][grade]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10">
+                <input type="time" name="details[\${rowCount}][jam]" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" required>
+            </td>
+            <td class="p-2">
+                <input type="number" step="0.01" name="details[\${rowCount}][meter_count]" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="0">
+            </td>
+            <td class="p-2">
+                <input type="text" name="details[\${rowCount}][no_pcs]" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="PCS...">
+            </td>
+            <td class="p-2">
+                <select name="details[\${rowCount}][grade]" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10">
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
                     <option value="BS">BS</option>
                 </select>
             </td>
-            <td class="p-2"><input type="number" step="0.01" name="details[\${rowCount}][usage_qty]" class="w-full text-sm text-center border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="0.00"></td>
+            <td class="p-2">
+                <input type="number" step="0.01" name="details[\${rowCount}][usage_qty]" class="w-full text-sm border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="kg">
+            </td>
              <td class="p-2"><input type="text" name="details[\${rowCount}][posisi_benang_putus]" class="w-full text-sm text-left border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="Bar I, II..."></td>
             <td class="p-2"><input type="text" name="details[\${rowCount}][kode_masalah]" class="w-full text-sm text-left border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="Kode"></td>
             <td class="p-2"><input type="text" name="details[\${rowCount}][comment]" class="w-full text-sm text-left border-gray-300 rounded focus:border-indigo-500 focus:ring-indigo-500 h-10" placeholder="..."></td>
@@ -190,9 +192,9 @@
         }
     }
 
-    function autoSelectYarn(patternSelect) {
-        const patternName = patternSelect.value;
-        const row = patternSelect.closest('tr');
+    function autoSelectYarn(patternInput) {
+        const patternName = patternInput.value;
+        const row = patternInput.closest('tr');
         const yarnSelect = row.querySelector('select[name*="[yarn_material_id]"]'); // Find sibling yarn select
         
         if (patternName && fabricMap[patternName]) {
@@ -205,9 +207,6 @@
                     yarnSelect.classList.remove('bg-green-50', 'text-green-700');
                 }, 1000);
             }
-        } else {
-             // Reset if no pattern or mapping not found (optional, or keep previous)
-             // yarnSelect.value = ""; 
         }
     }
 </script>

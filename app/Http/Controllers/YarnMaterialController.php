@@ -11,8 +11,8 @@ class YarnMaterialController extends Controller
      */
     public function index()
     {
-        $yarns = \App\Models\YarnMaterial::latest()->get(); // Get all for manual table logic or limited pagination
-        $fabrics = \App\Models\Fabric::latest()->get();
+        $yarns = \App\Models\YarnMaterial::latest()->paginate(10, ['*'], 'yarns_page');
+        $fabrics = \App\Models\Fabric::latest()->paginate(10, ['*'], 'fabrics_page');
         return view('yarns.index', compact('yarns', 'fabrics'));
     }
 

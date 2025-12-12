@@ -21,48 +21,57 @@
                 <thead class="bg-slate-50 border-b border-slate-100">
                     <tr>
                         <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Tanggal</th>
-                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">No. Mesin</th>
-                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Total Output (PCS)</th>
-                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs text-center">Status</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Operator</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Pattern</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Jam</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Meter</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Grade</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs">Stok (Kg)</th>
+                        <th class="py-4 px-6 font-semibold text-slate-500 uppercase tracking-wider text-xs text-center">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                 @forelse($reports as $report)
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="py-4 px-6 font-bold text-slate-900">
-                        {{ $report->production_date->format('d M Y') }}
-                    </td>
-                    <td class="py-4 px-6 text-slate-600 font-medium">
-                        {{ $report->machine_name }}
-                    </td>
-                    <td class="py-4 px-6 text-slate-600 font-medium">
-                        {{ $report->details->sum('pcs_count') }}
-                    </td>
-                    <td class="py-4 px-6 text-center">
-                        @if($report->status == 'Approved')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 shadow-sm">
-                                Approved
-                            </span>
-                        @elseif($report->status == 'Rejected')
-                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 shadow-sm" title="{{ $report->rejection_note }}">
-                                Rejected (Info)
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm">
-                                Pending
-                            </span>
-                        @endif
-                    </td>
-                </tr>
+                    @foreach($report->details as $detail)
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="py-4 px-6 font-bold text-slate-900 whitespace-nowrap">
+                            {{ $report->production_date->format('d/m/Y') }}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600 font-medium">
+                            {{ $report->user->name }}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600">
+                            {{ $detail->pattern ?? '-' }}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600">
+                            {{ $detail->jam ? \Carbon\Carbon::parse($detail->jam)->format('H:i') : '-' }}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600">
+                            {{ $detail->meter_count }}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600 font-bold">
+                            {{ $detail->grade }}
+                        </td>
+                         <td class="py-4 px-6 text-slate-600 font-bold">
+                            {{ number_format($detail->usage_qty, 2) }}
+                        </td>
+                        <td class="py-4 px-6 text-center text-slate-500 text-xs">
+                             {{ $detail->comment ?? '-' }}
+                        </td>
+                    </tr>
+                    @endforeach
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-8 text-center text-slate-400">
-                        Anda belum pernah membuat laporan.
+                    <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                        Belum ada laporan produksi.
                     </td>
                 </tr>
                 @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-100">
+            {{ $reports->links('vendor.pagination.custom') }}
         </div>
     </div>
 </div>
