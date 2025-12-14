@@ -78,8 +78,8 @@
             </table>
         </div>
         @if($users->hasPages())
-        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100">
-            {{ $users->links() }}
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-100">
+            {{ $users->links('vendor.pagination.custom') }}
         </div>
         @endif
     </div>
