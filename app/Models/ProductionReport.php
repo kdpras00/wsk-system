@@ -36,7 +36,7 @@ class ProductionReport extends Model
         return $this->belongsTo(ProductionOrder::class);
     }
 
-    public function approver(): BelongsTo
+    public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }

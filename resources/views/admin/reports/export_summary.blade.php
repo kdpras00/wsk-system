@@ -33,7 +33,7 @@
                 <td>{{ $report->details->first()->shift_name ?? '-' }}</td>
                 <td>{{ $report->details->sum('pcs_count') }}</td>
                 <td>{{ $report->status }}</td>
-                <td>{{ $report->approvedDetail->name ?? '-' }}</td>
+                <td>{{ $report->approvedBy->name ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>
