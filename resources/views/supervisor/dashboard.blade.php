@@ -1,27 +1,25 @@
 @extends('layouts.app')
 
-@section('header', 'Manager Overview')
+@section('header', 'Supervisor Overview')
 
 @section('content')
 <div class="space-y-6">
     <!-- Welcome Card -->
     <div class="bg-slate-900 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
         <div class="relative z-10">
-            <h2 class="text-3xl font-bold">Production Overview</h2>
-            <p class="text-slate-400 mt-2 max-w-xl">Monitor active orders and material inventory status in real-time.</p>
+            <h2 class="text-3xl font-bold">Supervisor Dashboard</h2>
+            <p class="text-slate-400 mt-2 max-w-xl">Monitor active orders and production status.</p>
         </div>
         <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-white/10 to-transparent pointer-events-none"></div>
     </div>
 
-    <!-- Metrics -->
-    
     <!-- Instructions Section -->
     @if(isset($instructions) && $instructions->count() > 0)
     <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
         <div class="flex items-center justify-between mb-2">
             <h3 class="text-lg font-bold text-blue-800 flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Instruksi Terbaru (Ditujukan untuk Manager/All)
+                Instruksi Terbaru
             </h3>
         </div>
         <div class="space-y-3">
@@ -90,8 +88,5 @@
             </div>
         </div>
     </div>
-        
-    {{-- Verification Pending section removed as per user request --}}
-</div>
 </div>
 @endsection

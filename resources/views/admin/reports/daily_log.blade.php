@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('header', 'Rekapitulasi Laporan Harian')
+@section('header', 'Rekapitulasi Laporan')
 
 @section('content')
 <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-8">
         <div>
-             <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Rekapitulasi Laporan Harian</h2>
-             <p class="text-slate-500 mt-1">Laporan produksi harian dari semua operator.</p>
+             <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Rekapitulasi Laporan</h2>
+             <!-- <p class="text-slate-500 mt-1">Laporan produksi Operator</p> -->
         </div>
         <a href="{{ route('daily-reports.export_summary') }}" target="_blank" id="export-btn" class="group relative inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white transition-all duration-200 bg-green-600 rounded-xl hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
             <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -27,6 +27,11 @@
                 <button onclick="switchTab('details')" id="details-tab" class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-slate-600 hover:border-slate-300 text-slate-500 transition-all font-bold" type="button" role="tab" aria-controls="details" aria-selected="false">
                     Laporan Operator (Log Sheet Unit)
                 </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <a href="{{ route('daily-reports.monthly_yarn_usage') }}" class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-slate-600 hover:border-slate-300 text-slate-500 transition-all font-bold">
+                    Rekap Benang & Kain (Bulanan)
+                </a>
             </li>
         </ul>
     </div>

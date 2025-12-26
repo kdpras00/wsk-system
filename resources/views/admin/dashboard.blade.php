@@ -18,6 +18,33 @@
     </div>
 
     <!-- Stats Grid -->
+    
+    <!-- Instructions Section -->
+    @if(isset($instructions) && $instructions->count() > 0)
+    <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-bold text-blue-800 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Instruksi Terbaru
+            </h3>
+        </div>
+        <div class="space-y-3">
+            @foreach($instructions as $instruction)
+                <div class="bg-white p-3 rounded-md shadow-sm border border-blue-100">
+                    <div class="flex justify-between items-start">
+                        <span class="font-bold text-slate-800">{{ $instruction->title }}</span>
+                        <span class="text-xs text-slate-400">{{ $instruction->created_at->diffForHumans() }}</span>
+                    </div>
+                    <p class="text-sm text-slate-600 mt-1">{{ $instruction->description }}</p>
+                    <div class="mt-2 text-xs text-slate-400">
+                        Dari: <span class="font-medium text-slate-500">{{ $instruction->user->name ?? 'Manager' }}</span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Users -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">

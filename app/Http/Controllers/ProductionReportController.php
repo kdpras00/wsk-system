@@ -73,6 +73,50 @@ class ProductionReportController extends Controller
         return view('admin.reports.export_summary', compact('reports'));
     }
 
+
+    /**
+     * Show Monthly Yarn Usage & Fabric Output Report.
+     */
+    public function monthlyYarnUsage(Request $request)
+    {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+            abort(403);
+        }
+
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+
+        // Query production details filtered by month/year of the PARENT report
+        $data = DB::table('production_report_details')
+            ->join('production_reports', 'production_report_details.production_report_id', '=', 'production_reports.id')
+            ->leftJoin('yarn_materials', 'production_report_details.yarn_material_id', '=', 'yarn_materials.id')
+            ->select(
+                'production_reports.machine_name',
+                'production_report_details.pattern',
+                'yarn_materials.name as yarn_name',
+                DB::raw('SUM(production_report_details.usage_qty) as total_usage_qty'),
+                DB::raw('SUM(production_report_details.meter_count) as total_meter_count'),
+                DB::raw('SUM(production_report_details.kg_count) as total_kg_count')
+            )
+            ->whereMonth('production_reports.production_date', $month)
+            ->whereYear('production_reports.production_date', $year)
+            ->whereNotNull('production_report_details.yarn_material_id') // Ensure we only count rows with yarn usage
+            ->groupBy('production_reports.machine_name', 'production_report_details.pattern', 'yarn_materials.name')
+            ->orderBy('production_reports.machine_name')
+            ->orderBy('production_report_details.pattern')
+            ->get();
+
+        // Check if Export Requested
+        if ($request->has('export') && $request->input('export') == 'true') {
+            $filename = "rekap_bahan_kain_{$year}-{$month}_" . date('Y-m-d_H-i') . ".xls";
+            header("Content-Type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            return view('admin.reports.export_monthly_yarn_usage', compact('data', 'month', 'year'));
+        }
+
+        return view('admin.reports.monthly_yarn_usage', compact('data', 'month', 'year'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

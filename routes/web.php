@@ -27,11 +27,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/production/{id}/status', [\App\Http\Controllers\ProductionController::class, 'updateStatus'])->name('production.update-status');
     
     // Daily Production Reports (Digitization)
+    Route::get('daily-reports/monthly-yarn-usage', [\App\Http\Controllers\ProductionReportController::class, 'monthlyYarnUsage'])->name('daily-reports.monthly_yarn_usage');
     Route::get('daily-reports/export-details', [\App\Http\Controllers\ProductionReportController::class, 'exportDetails'])->name('daily-reports.export_details');
     Route::get('daily-reports/export-summary', [\App\Http\Controllers\ProductionReportController::class, 'exportSummary'])->name('daily-reports.export_summary');
     Route::patch('daily-reports/{productionReport}/approve', [\App\Http\Controllers\ProductionReportController::class, 'approve'])->name('daily-reports.approve');
     Route::patch('daily-reports/{productionReport}/reject', [\App\Http\Controllers\ProductionReportController::class, 'reject'])->name('daily-reports.reject');
     Route::resource('daily-reports', \App\Http\Controllers\ProductionReportController::class);
+    Route::resource('instructions', \App\Http\Controllers\InstructionController::class);
 
     // Admin Routes
     Route::middleware(['auth'])->prefix('admin')->group(function () {

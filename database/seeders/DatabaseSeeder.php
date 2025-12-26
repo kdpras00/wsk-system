@@ -37,6 +37,15 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        if (!User::where('email', 'supervisor@example.com')->exists()) {
+            User::factory()->create([
+                'name' => 'Site Supervisor',
+                'email' => 'supervisor@example.com',
+                'password' => bcrypt('password'),
+                'role' => 'supervisor',
+            ]);
+        }
+
         // Create 5 Operators
         User::factory(5)->create(['role' => 'operator']);
 
@@ -58,5 +67,8 @@ class DatabaseSeeder extends Seeder
                 'yarn_material_id' => $yarns->random()->id, // Pick from existing yarns
             ]);
         });
+
+        // 6. Create Instructions
+        $this->call(InstructionSeeder::class);
     }
 }
