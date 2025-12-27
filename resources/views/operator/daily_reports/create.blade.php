@@ -111,6 +111,13 @@
                 @endforeach
             </datalist>
 
+            <!-- Notes Field -->
+            <div class="mt-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                <label for="notes" class="block mb-2 text-sm font-bold text-slate-700">Catatan Tambahan (Opsional)</label>
+                <textarea name="notes" id="notes" rows="3" class="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" placeholder="Tambahkan catatan atau keterangan tambahan jika diperlukan..."></textarea>
+                <p class="text-xs text-slate-500 mt-1">Contoh: Mesin sempat mati 30 menit, Pergantian benang, dll.</p>
+            </div>
+
             <div class="flex justify-end pt-4 border-t border-slate-100">
                 <button type="submit" class="text-white bg-slate-900 hover:bg-slate-800 focus:ring-4 focus:outline-none focus:ring-slate-300 font-bold rounded-lg text-sm px-6 py-3 text-center shadow-lg transition-all w-full md:w-auto">
                     Simpan Laporan Harian

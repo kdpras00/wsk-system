@@ -22,7 +22,7 @@ class ProductionReportController extends Controller
     public function index()
     {
         // Admin View: Table Recap
-        if (Auth::user()->role === 'admin' || Auth::user()->role === 'manager') {
+        if (in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             $reports = ProductionReport::with(['user', 'details'])->latest()->get();
             return view('admin.reports.daily_log', compact('reports'));
         }
@@ -40,7 +40,7 @@ class ProductionReportController extends Controller
      */
     public function exportDetails()
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+        if (!in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             abort(403);
         }
 
@@ -59,7 +59,7 @@ class ProductionReportController extends Controller
      */
     public function exportSummary()
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+        if (!in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             abort(403);
         }
 
@@ -79,7 +79,7 @@ class ProductionReportController extends Controller
      */
     public function monthlyYarnUsage(Request $request)
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+        if (!in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             abort(403);
         }
 
@@ -258,7 +258,7 @@ class ProductionReportController extends Controller
      */
     public function approve(ProductionReport $productionReport)
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+        if (!in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             abort(403);
         }
 
@@ -294,7 +294,7 @@ class ProductionReportController extends Controller
 
     public function reject(Request $request, ProductionReport $productionReport)
     {
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'manager') {
+        if (!in_array(Auth::user()->role, ['admin', 'manager', 'supervisor'])) {
             abort(403);
         }
 
