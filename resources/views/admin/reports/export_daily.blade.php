@@ -7,10 +7,13 @@
     <table border="1">
         <thead>
             <tr>
-                <th colspan="15" style="font-size: 16px; font-weight: bold; text-align: center;">REKAPITULASI LAPORAN PRODUKSI HARIAN</th>
+                <th colspan="3" rowspan="2" style="text-align: left; vertical-align: middle;">
+                    <img src="{{ asset('assets/img/logo-wsk.png') }}" alt="WSK Logo" height="60">
+                </th>
+                <th colspan="12" style="font-size: 16px; font-weight: bold; text-align: center; vertical-align: middle;">REKAPITULASI LAPORAN PRODUKSI HARIAN</th>
             </tr>
             <tr>
-                <th colspan="15" style="text-align: center;">Generated: {{ date('d M Y H:i') }}</th>
+                <th colspan="12" style="text-align: center;">Generated: {{ date('d M Y H:i') }}</th>
             </tr>
             <tr>
                 <th>No</th>
@@ -52,6 +55,27 @@
                 </tr>
                 @endforeach
             @endforeach
+            <tr><td colspan="15"></td></tr>
+            <tr>
+                <td colspan="15"></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+                <td colspan="3" style="text-align: center;">Dibuat Oleh,</td>
+                <td colspan="4"></td>
+                <td colspan="3" style="text-align: center;">Disetujui Oleh,</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="15" style="height: 60px;"></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+                <td colspan="3" style="text-align: center;">( ......................... )</td>
+                <td colspan="4"></td>
+                <td colspan="3" style="text-align: center;">( Manager )</td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 </body>

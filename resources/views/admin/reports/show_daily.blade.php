@@ -18,9 +18,16 @@
     <!-- Paper-like Container -->
     <div class="bg-white p-8 shadow-lg border border-slate-200" style="min-height: 800px;">
         <!-- Header -->
-        <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
-            <h1 class="text-2xl font-bold text-slate-900 uppercase tracking-widest">Laporan Produksi Harian</h1>
-            <p class="text-sm text-slate-500 font-medium">PT. WSK PRODUCTION SYSTEM</p>
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
+            <div class="w-1/4">
+                <img src="{{ asset('assets/img/logo-wsk.png') }}" alt="WSK Logo" class="h-16 object-contain">
+            </div>
+            <div class="w-1/2 text-center">
+                <h1 class="text-2xl font-bold text-slate-900 uppercase tracking-widest">Laporan Produksi Harian</h1>
+                <p class="text-sm text-slate-500 font-medium">PT. WSK PRODUCTION SYSTEM</p>
+            </div>
+            <div class="w-1/4"></div> <!-- Spacer for centering -->
         </div>
 
         <!-- Info Grid -->

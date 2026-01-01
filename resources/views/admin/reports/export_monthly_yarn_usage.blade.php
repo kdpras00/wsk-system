@@ -19,11 +19,17 @@
     </style>
 </head>
 <body>
-    <h2>Laporan Bulanan Pemakaian Benang & Hasil Kain</h2>
-    <p>Periode: {{ DateTime::createFromFormat('!m', $month)->format('F') }} {{ $year }}</p>
-
     <table>
         <thead>
+            <tr>
+                <th colspan="2" rowspan="2" style="text-align: left; vertical-align: middle;">
+                    <img src="{{ asset('assets/img/logo-wsk.png') }}" alt="WSK Logo" height="60">
+                </th>
+                <th colspan="4" style="font-size: 16px; font-weight: bold; text-align: center; vertical-align: middle;">Laporan Bulanan Pemakaian Benang & Hasil Kain</th>
+            </tr>
+            <tr>
+                 <th colspan="4" style="text-align: center;">Periode: {{ DateTime::createFromFormat('!m', $month)->format('F') }} {{ $year }}</th>
+            </tr>
             <tr>
                 <th>Mesin</th>
                 <th>Pattern</th>
@@ -44,6 +50,25 @@
                     <td style="text-align: right;">{{ number_format($row->total_kg_count, 2) }}</td>
                 </tr>
             @endforeach
+            <tr><td colspan="6"></td></tr>
+            <tr>
+                <td colspan="6"></td>
+            </tr>
+            <tr>
+                <td colspan="1"></td>
+                <td colspan="2" style="text-align: center;">Dibuat Oleh,</td>
+                <td colspan="1"></td>
+                <td colspan="2" style="text-align: center;">Disetujui Oleh,</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="height: 60px;"></td>
+            </tr>
+            <tr>
+                <td colspan="1"></td>
+                <td colspan="2" style="text-align: center;">( ......................... )</td>
+                <td colspan="1"></td>
+                <td colspan="2" style="text-align: center;">( Manager )</td>
+            </tr>
         </tbody>
     </table>
 </body>
